@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import postgres from 'postgres';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth'; 
+import bcrypt from 'bcrypt';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' }); 
 
@@ -125,3 +126,50 @@ export async function deleteInvoice(id: string) {
       throw error;
     }
   }
+
+export async function register(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  const parsed = z
+    .object({
+      name: z.string().min(1),
+      email: z.string().email(),
+      password: z.string().min(6),
+    })
+    .safeParse({
+      name: formData.get('name'),
+      email: formData.get('email'),
+      password: formData.get('password'),
+    });
+
+  if (!parsed.success) {
+    return 'Invalid input.';
+  }
+
+  const { name, email, password } = parsed.data;
+
+  try {
+    const existing = await sql`SELECT 1 FROM users WHERE email = ${email} LIMIT 1`;
+    if (existing.length > 0) {
+      return 'Email already registered.';
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    await sql`
+      INSERT INTO users (name, email, password)
+      VALUES (${name}, ${email}, ${hashed})
+    `;
+  } catch (e) {
+    return 'Failed to create account.';
+  }
+
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return 'Account created, but sign in failed.';
+    }
+    throw error;
+  }
+}
