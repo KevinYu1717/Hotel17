@@ -151,7 +151,13 @@ export async function fetchInvoiceById(id: string) {
         invoices.id,
         invoices.customer_id,
         invoices.amount,
-        invoices.status
+        invoices.status,
+        invoices.room_type,
+        invoices.breakfast_included,
+        invoices.check_in_date,
+        invoices.check_out_date,
+        invoices.guests_count,
+        invoices.id_verified
       FROM invoices
       WHERE invoices.id = ?
     `).all(id) as InvoiceForm[];
@@ -160,6 +166,8 @@ export async function fetchInvoiceById(id: string) {
       ...invoice,
       // Convert amount from cents to dollars
       amount: invoice.amount / 100,
+      breakfast_included: Boolean(invoice.breakfast_included),
+      id_verified: Boolean(invoice.id_verified),
     }));
     
     return invoice[0];

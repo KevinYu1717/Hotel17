@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+import KeycardGenerator from '@/app/ui/invoices/keycard-modal';
 import { updateInvoice, State } from '@/app/lib/actions';
 import { useActionState } from 'react';
 
@@ -50,6 +51,98 @@ export default function EditInvoiceForm({
               ))}
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+        </div>
+
+        {/* Room Type */}
+        <div className="mb-4">
+          <label htmlFor="room_type" className="mb-2 block text-sm font-medium">
+            Room Type
+          </label>
+          <div className="relative">
+            <select
+              id="room_type"
+              name="room_type"
+              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              defaultValue={invoice.room_type || 'single'}
+            >
+              <option value="single">Single Room</option>
+              <option value="double">Double Room</option>
+              <option value="suite">Suite</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Guest Count */}
+        <div className="mb-4">
+          <label htmlFor="guests_count" className="mb-2 block text-sm font-medium">
+            Number of Guests
+          </label>
+          <div className="relative">
+            <input
+              id="guests_count"
+              name="guests_count"
+              type="number"
+              min="1"
+              defaultValue={invoice.guests_count || 1}
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        {/* Check-in / Check-out */}
+        <div className="mb-4 grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="check_in_date" className="mb-2 block text-sm font-medium">
+              Check-in Date
+            </label>
+            <input
+              id="check_in_date"
+              name="check_in_date"
+              type="date"
+              defaultValue={invoice.check_in_date || ''}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="check_out_date" className="mb-2 block text-sm font-medium">
+              Check-out Date
+            </label>
+            <input
+              id="check_out_date"
+              name="check_out_date"
+              type="date"
+              defaultValue={invoice.check_out_date || ''}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        {/* Options */}
+        <div className="mb-4 flex gap-4">
+          <div className="flex items-center">
+            <input
+              id="breakfast_included"
+              name="breakfast_included"
+              type="checkbox"
+              defaultChecked={invoice.breakfast_included}
+              className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+            />
+            <label htmlFor="breakfast_included" className="ml-2 cursor-pointer text-sm font-medium">
+              Breakfast Included
+            </label>
+          </div>
+          <div className="flex items-center">
+            <input
+              id="id_verified"
+              name="id_verified"
+              type="checkbox"
+              defaultChecked={invoice.id_verified}
+              className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+            />
+            <label htmlFor="id_verified" className="ml-2 cursor-pointer text-sm font-medium">
+              ID/Passport Verified
+            </label>
           </div>
         </div>
 
@@ -118,6 +211,7 @@ export default function EditInvoiceForm({
         </fieldset>
       </div>
       <div className="mt-6 flex justify-end gap-4">
+        <KeycardGenerator />
         <Link
           href="/dashboard/invoices"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"

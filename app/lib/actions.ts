@@ -20,6 +20,12 @@ const FormSchema = z.object({
     invalid_type_error: 'Please select an invoice status.',
   }),
   date: z.string(),
+  room_type: z.string().optional(),
+  breakfast_included: z.boolean().optional(),
+  check_in_date: z.string().optional(),
+  check_out_date: z.string().optional(),
+  guests_count: z.coerce.number().optional(),
+  id_verified: z.boolean().optional(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -29,6 +35,12 @@ export type State = {
     customerId?: string[];
     amount?: string[];
     status?: string[];
+    room_type?: string[];
+    breakfast_included?: string[];
+    check_in_date?: string[];
+    check_out_date?: string[];
+    guests_count?: string[];
+    id_verified?: string[];
   };
   message?: string | null;
 };
@@ -38,6 +50,12 @@ export async function createInvoice(prevState: State, formData: FormData) {
       customerId: formData.get('customerId'),
       amount: formData.get('amount'),
       status: formData.get('status'),
+      room_type: formData.get('room_type'),
+      breakfast_included: formData.get('breakfast_included') === 'on',
+      check_in_date: formData.get('check_in_date'),
+      check_out_date: formData.get('check_out_date'),
+      guests_count: formData.get('guests_count'),
+      id_verified: formData.get('id_verified') === 'on',
     });
     if (!validatedFields.success) {
       return {
@@ -45,14 +63,14 @@ export async function createInvoice(prevState: State, formData: FormData) {
         message: 'Missing Fields. Failed to Create Invoice.',
       };
     }
-    const { customerId, amount, status } = validatedFields.data;
+    const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified } = validatedFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
     try {
       db.prepare(`
-        INSERT INTO invoices (id, customer_id, amount, status, date)
-        VALUES (?, ?, ?, ?, ?)
-      `).run(crypto.randomUUID(), customerId, amountInCents, status, date);
+        INSERT INTO invoices (id, customer_id, amount, status, date, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(crypto.randomUUID(), customerId, amountInCents, status, date, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0);
     } catch (error) {
       // We'll also log the error to the console for now
       console.error(error);
@@ -74,6 +92,12 @@ export async function updateInvoice(
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
+    room_type: formData.get('room_type'),
+    breakfast_included: formData.get('breakfast_included') === 'on',
+    check_in_date: formData.get('check_in_date'),
+    check_out_date: formData.get('check_out_date'),
+    guests_count: formData.get('guests_count'),
+    id_verified: formData.get('id_verified') === 'on',
   });
 
   if (!validatedFields.success) {
@@ -83,15 +107,15 @@ export async function updateInvoice(
     };
   }
 
-  const { customerId, amount, status } = validatedFields.data;
+  const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified } = validatedFields.data;
   const amountInCents = amount * 100;
 
   try {
     db.prepare(`
       UPDATE invoices
-      SET customer_id = ?, amount = ?, status = ?
+      SET customer_id = ?, amount = ?, status = ?, room_type = ?, breakfast_included = ?, check_in_date = ?, check_out_date = ?, guests_count = ?, id_verified = ?
       WHERE id = ?
-    `).run(customerId, amountInCents, status, id);
+    `).run(customerId, amountInCents, status, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0, id);
   } catch (error) {
     // We'll also log the error to the console for now
     console.error(error);

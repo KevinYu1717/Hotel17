@@ -54,6 +54,94 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
       </div>
         </div>
 
+        {/* Room Type */}
+        <div className="mb-4">
+          <label htmlFor="room_type" className="mb-2 block text-sm font-medium">
+            Room Type
+          </label>
+          <div className="relative">
+            <select
+              id="room_type"
+              name="room_type"
+              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              defaultValue="single"
+            >
+              <option value="single">Single Room</option>
+              <option value="double">Double Room</option>
+              <option value="suite">Suite</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Guest Count */}
+        <div className="mb-4">
+          <label htmlFor="guests_count" className="mb-2 block text-sm font-medium">
+            Number of Guests
+          </label>
+          <div className="relative">
+            <input
+              id="guests_count"
+              name="guests_count"
+              type="number"
+              min="1"
+              defaultValue="1"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        {/* Check-in / Check-out */}
+        <div className="mb-4 grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="check_in_date" className="mb-2 block text-sm font-medium">
+              Check-in Date
+            </label>
+            <input
+              id="check_in_date"
+              name="check_in_date"
+              type="date"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="check_out_date" className="mb-2 block text-sm font-medium">
+              Check-out Date
+            </label>
+            <input
+              id="check_out_date"
+              name="check_out_date"
+              type="date"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        {/* Options */}
+        <div className="mb-4 flex gap-4">
+          <div className="flex items-center">
+            <input
+              id="breakfast_included"
+              name="breakfast_included"
+              type="checkbox"
+              className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+            />
+            <label htmlFor="breakfast_included" className="ml-2 cursor-pointer text-sm font-medium">
+              Breakfast Included
+            </label>
+          </div>
+          <div className="flex items-center">
+            <input
+              id="id_verified"
+              name="id_verified"
+              type="checkbox"
+              className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+            />
+            <label htmlFor="id_verified" className="ml-2 cursor-pointer text-sm font-medium">
+              ID/Passport Verified
+            </label>
+          </div>
+        </div>
+
         {/* Invoice Amount */}
         <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">
