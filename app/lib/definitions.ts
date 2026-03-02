@@ -30,6 +30,11 @@ export type Invoice = {
   check_out_date?: string;
   guests_count?: number;
   id_verified?: boolean;
+  id_document_type?: string;
+  id_number?: string;
+  id_expiration_date?: string;
+  id_issuing_country?: string;
+  id_issuing_authority?: string;
 };
 
 export type Revenue = {
@@ -97,4 +102,9 @@ export type InvoiceForm = {
   check_out_date?: string;
   guests_count?: number;
   id_verified?: boolean;
+  id_document_type?: string;
+  id_number?: string;
+  id_expiration_date?: string;
+  id_issuing_country?: string;
+  id_issuing_authority?: string;
 };

@@ -172,7 +172,18 @@ async function seed() {
         customer_id TEXT NOT NULL,
         amount INTEGER NOT NULL,
         status TEXT NOT NULL,
-        date TEXT NOT NULL
+        date TEXT NOT NULL,
+        room_type TEXT,
+        breakfast_included BOOLEAN DEFAULT FALSE,
+        check_in_date TEXT,
+        check_out_date TEXT,
+        guests_count INTEGER,
+        id_verified BOOLEAN DEFAULT FALSE,
+        id_document_type TEXT,
+        id_number TEXT,
+        id_expiration_date TEXT,
+        id_issuing_country TEXT,
+        id_issuing_authority TEXT
       );
 
       CREATE TABLE IF NOT EXISTS revenue (

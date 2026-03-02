@@ -157,7 +157,12 @@ export async function fetchInvoiceById(id: string) {
         invoices.check_in_date,
         invoices.check_out_date,
         invoices.guests_count,
-        invoices.id_verified
+        invoices.id_verified,
+        invoices.id_document_type,
+        invoices.id_number,
+        invoices.id_expiration_date,
+        invoices.id_issuing_country,
+        invoices.id_issuing_authority
       FROM invoices
       WHERE invoices.id = ?
     `).all(id) as InvoiceForm[];

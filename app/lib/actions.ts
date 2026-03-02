@@ -26,6 +26,11 @@ const FormSchema = z.object({
   check_out_date: z.string().optional(),
   guests_count: z.coerce.number().optional(),
   id_verified: z.boolean().optional(),
+  id_document_type: z.string().optional(),
+  id_number: z.string().optional(),
+  id_expiration_date: z.string().optional(),
+  id_issuing_country: z.string().optional(),
+  id_issuing_authority: z.string().optional(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -41,11 +46,16 @@ export type State = {
     check_out_date?: string[];
     guests_count?: string[];
     id_verified?: string[];
+    id_document_type?: string[];
+    id_number?: string[];
+    id_expiration_date?: string[];
+    id_issuing_country?: string[];
+    id_issuing_authority?: string[];
   };
   message?: string | null;
 };
 
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createInvoice(_prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
       customerId: formData.get('customerId'),
       amount: formData.get('amount'),
@@ -56,6 +66,11 @@ export async function createInvoice(prevState: State, formData: FormData) {
       check_out_date: formData.get('check_out_date'),
       guests_count: formData.get('guests_count'),
       id_verified: formData.get('id_verified') === 'on',
+      id_document_type: formData.get('id_document_type'),
+      id_number: formData.get('id_number'),
+      id_expiration_date: formData.get('id_expiration_date'),
+      id_issuing_country: formData.get('id_issuing_country'),
+      id_issuing_authority: formData.get('id_issuing_authority'),
     });
     if (!validatedFields.success) {
       return {
@@ -63,14 +78,14 @@ export async function createInvoice(prevState: State, formData: FormData) {
         message: 'Missing Fields. Failed to Create Invoice.',
       };
     }
-    const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified } = validatedFields.data;
+    const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified, id_document_type, id_number, id_expiration_date, id_issuing_country, id_issuing_authority } = validatedFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
     try {
       db.prepare(`
-        INSERT INTO invoices (id, customer_id, amount, status, date, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(crypto.randomUUID(), customerId, amountInCents, status, date, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0);
+        INSERT INTO invoices (id, customer_id, amount, status, date, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified, id_document_type, id_number, id_expiration_date, id_issuing_country, id_issuing_authority)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(crypto.randomUUID(), customerId, amountInCents, status, date, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0, id_document_type || null, id_number || null, id_expiration_date || null, id_issuing_country || null, id_issuing_authority || null);
     } catch (error) {
       // We'll also log the error to the console for now
       console.error(error);
@@ -86,8 +101,9 @@ const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function updateInvoice(
   id: string,
-  prevState: State,
-  formData: FormData,) {
+  _prevState: State,
+  formData: FormData,
+) {
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
@@ -98,6 +114,11 @@ export async function updateInvoice(
     check_out_date: formData.get('check_out_date'),
     guests_count: formData.get('guests_count'),
     id_verified: formData.get('id_verified') === 'on',
+    id_document_type: formData.get('id_document_type'),
+    id_number: formData.get('id_number'),
+    id_expiration_date: formData.get('id_expiration_date'),
+    id_issuing_country: formData.get('id_issuing_country'),
+    id_issuing_authority: formData.get('id_issuing_authority'),
   });
 
   if (!validatedFields.success) {
@@ -107,15 +128,15 @@ export async function updateInvoice(
     };
   }
 
-  const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified } = validatedFields.data;
+  const { customerId, amount, status, room_type, breakfast_included, check_in_date, check_out_date, guests_count, id_verified, id_document_type, id_number, id_expiration_date, id_issuing_country, id_issuing_authority } = validatedFields.data;
   const amountInCents = amount * 100;
 
   try {
     db.prepare(`
       UPDATE invoices
-      SET customer_id = ?, amount = ?, status = ?, room_type = ?, breakfast_included = ?, check_in_date = ?, check_out_date = ?, guests_count = ?, id_verified = ?
+      SET customer_id = ?, amount = ?, status = ?, room_type = ?, breakfast_included = ?, check_in_date = ?, check_out_date = ?, guests_count = ?, id_verified = ?, id_document_type = ?, id_number = ?, id_expiration_date = ?, id_issuing_country = ?, id_issuing_authority = ?
       WHERE id = ?
-    `).run(customerId, amountInCents, status, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0, id);
+    `).run(customerId, amountInCents, status, room_type || null, breakfast_included ? 1 : 0, check_in_date || null, check_out_date || null, guests_count || 1, id_verified ? 1 : 0, id_document_type || null, id_number || null, id_expiration_date || null, id_issuing_country || null, id_issuing_authority || null, id);
   } catch (error) {
     // We'll also log the error to the console for now
     console.error(error);
@@ -127,16 +148,16 @@ export async function updateInvoice(
 }
 
 export async function deleteInvoice(id: string) {
-    try {
-      db.prepare(`DELETE FROM invoices WHERE id = ?`).run(id);
-      revalidatePath('/dashboard/invoices');
-    } catch (error) {
-      console.error(error);
-    }
+  try {
+    db.prepare(`DELETE FROM invoices WHERE id = ?`).run(id);
+    revalidatePath('/dashboard/invoices');
+  } catch (error) {
+    console.error('Database Error:', error);
+  }
 }
 
 export async function authenticate(
-  prevState: string | undefined,
+  _prevState: string | undefined,
   formData: FormData,
 ) {
   try {
@@ -200,4 +221,53 @@ export async function register(
     }
     throw error;
   }
+}
+
+const CreateCustomer = z.object({
+  name: z.string().min(1, { message: 'Please enter a name.' }),
+  email: z.string().email({ message: 'Please enter a valid email.' }),
+  image_url: z.string().optional(),
+});
+
+export async function createCustomer(
+  _prevState: State | undefined,
+  formData: FormData,
+) {
+  const validatedFields = CreateCustomer.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    image_url: formData.get('image_url'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Customer.',
+    };
+  }
+
+  const { name, email, image_url } = validatedFields.data;
+
+  try {
+    // Check if customer already exists
+    const existing = db.prepare('SELECT 1 FROM customers WHERE email = ? LIMIT 1').get(email);
+    if (existing) {
+      return {
+        message: 'Customer with this email already exists.',
+      };
+    }
+
+    db.prepare(`
+      INSERT INTO customers (id, name, email, image_url)
+      VALUES (?, ?, ?, ?)
+    `).run(crypto.randomUUID(), name, email, image_url || '/customers/evil-rabbit.png');
+  } catch (error) {
+    console.error(error);
+    return {
+      message: 'Database Error: Failed to Create Customer.',
+    };
+  }
+
+  revalidatePath('/dashboard/customers');
+  return { message: 'Customer created successfully.' };
 }

@@ -12,6 +12,7 @@ import { Button } from '@/app/ui/button';
 import KeycardGenerator from '@/app/ui/invoices/keycard-modal';
 import { updateInvoice, State } from '@/app/lib/actions';
 import { useActionState } from 'react';
+import IDVerificationFields from '@/app/ui/invoices/id-verification-fields';
 
 export default function EditInvoiceForm({
   invoice,
@@ -118,8 +119,9 @@ export default function EditInvoiceForm({
           </div>
         </div>
 
-        {/* Options */}
-        <div className="mb-4 flex gap-4">
+        <IDVerificationFields invoice={invoice} />
+
+        <div className="mb-4">
           <div className="flex items-center">
             <input
               id="breakfast_included"
@@ -130,18 +132,6 @@ export default function EditInvoiceForm({
             />
             <label htmlFor="breakfast_included" className="ml-2 cursor-pointer text-sm font-medium">
               Breakfast Included
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input
-              id="id_verified"
-              name="id_verified"
-              type="checkbox"
-              defaultChecked={invoice.id_verified}
-              className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
-            />
-            <label htmlFor="id_verified" className="ml-2 cursor-pointer text-sm font-medium">
-              ID/Passport Verified
             </label>
           </div>
         </div>

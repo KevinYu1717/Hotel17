@@ -4,10 +4,10 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Acme Hotel Dashboard',
-    default: 'Acme Hotel Dashboard',
+    template: '%s | Hotel Hang Dashboard',
+    default: ' Hotel Hang Dashboard',
   },
-  description: 'The official Acme Hotel Dashboard, built with App Router.',
+  description: 'The official Hotel Hang Dashboard, built with App Router.',
   metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
 };
 
