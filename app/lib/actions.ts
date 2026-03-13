@@ -7,6 +7,8 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -233,20 +235,36 @@ export async function createCustomer(
   _prevState: State | undefined,
   formData: FormData,
 ) {
-  const validatedFields = CreateCustomer.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    image_url: formData.get('image_url'),
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  const image = formData.get('image') as File | null;
+  console.log('Form data:', {
+    name,
+    email,
+    image: image ? { name: image.name, size: image.size, type: image.type } : null
   });
 
-  if (!validatedFields.success) {
+  // Validate fields
+  if (!name || !email) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: {
+        name: !name ? ['Please enter a name.'] : undefined,
+        email: !email ? ['Please enter a valid email.'] : undefined,
+      },
       message: 'Missing Fields. Failed to Create Customer.',
     };
   }
 
-  const { name, email, image_url } = validatedFields.data;
+  if (!email.includes('@')) {
+    return {
+      errors: {
+        email: ['Please enter a valid email.'],
+      },
+      message: 'Invalid email. Failed to Create Customer.',
+    };
+  }
+
+  let image_url = '/customers/evil-rabbit.png';
 
   try {
     // Check if customer already exists
@@ -257,10 +275,30 @@ export async function createCustomer(
       };
     }
 
+    // Handle file upload if an image is provided
+    if (image && image.size > 0) {
+      // Create the customers directory if it doesn't exist
+      const customersDir = path.join(process.cwd(), 'public', 'customers');
+      if (!fs.existsSync(customersDir)) {
+        fs.mkdirSync(customersDir, { recursive: true });
+      }
+
+      // Generate a unique filename
+      const filename = `${crypto.randomUUID()}_${image.name}`;
+      const filePath = path.join(customersDir, filename);
+
+      // Read the file and write it to the directory
+      const buffer = Buffer.from(await image.arrayBuffer());
+      fs.writeFileSync(filePath, buffer);
+
+      // Set the image URL
+      image_url = `/customers/${filename}`;
+    }
+
     db.prepare(`
       INSERT INTO customers (id, name, email, image_url)
       VALUES (?, ?, ?, ?)
-    `).run(crypto.randomUUID(), name, email, image_url || '/customers/evil-rabbit.png');
+    `).run(crypto.randomUUID(), name, email, image_url);
   } catch (error) {
     console.error(error);
     return {

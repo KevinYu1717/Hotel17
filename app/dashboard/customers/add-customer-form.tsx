@@ -45,7 +45,7 @@ export default function AddCustomerForm() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4 mt-4">
             <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
               <input 
@@ -74,10 +74,12 @@ export default function AddCustomerForm() {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">Image URL (Optional)</label>
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image (Optional)</label>
               <input 
-                id="image_url" 
-                name="image_url" 
+                id="image" 
+                name="image" 
+                type="file" 
+                accept="image/*"
                 className={`w-full px-3 py-2 border rounded-md ${formState.errors?.image_url ? 'border-red-500' : 'border-gray-300'}`}
               />
               {formState.errors?.image_url && (
