@@ -22,7 +22,6 @@ const links = [
   },
   { name: 'Guests', href: '/dashboard/customers', icon: UserGroupIcon },
   { name: 'About', href: '/dashboard/about', icon: BoltIcon },
-  { name: 'Room', href: '/dashboard/room', icon: BookmarkIcon },
 ];
 
 export default function NavLinks() {

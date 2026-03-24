@@ -140,7 +140,7 @@ def import_from_csv(import_dir=None) -> dict:
     cursor = conn.cursor()
     
     if import_dir is None:
-        import_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'exports')
+        import_dir = 'exports'
     if not os.path.exists(import_dir):
         print(f"Import directory not found at: {import_dir}")
         print("Please export data first or create the directory with CSV files.")
@@ -176,6 +176,8 @@ def import_from_csv(import_dir=None) -> dict:
                 
                 placeholders = ','.join(['?' for _ in columns])
                 insert_query = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders});"
+                # cursor.execute("INSERT INTO customers (name,email) VALUES ('Tom','tom@example.com');")
+                # conn.commit()
                 
                 row_count = 0
                 for row in reader:
@@ -218,6 +220,7 @@ if __name__ == "__main__":
         export_dir = input("Enter export directory (press Enter for default): ").strip()
         if export_dir:
             exported_files = export_to_csv(export_dir=export_dir)
+            # print(exported_files)
         else:
             exported_files = export_to_csv()
         print("\nExported files:", exported_files)
